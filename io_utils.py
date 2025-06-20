@@ -42,7 +42,7 @@ def create_function_points():
         raise ValueError("Некорректные границы интервала")
 
     point_count = int(input("Число точек для генерации: "))
-    step_size = (right_bound - left_bound) / point_count
+    step_size = (right_bound - left_bound) / (point_count - 1)
     x_coords = []
     y_coords = []
     current_x = left_bound
@@ -50,7 +50,7 @@ def create_function_points():
         x_coords.append(current_x)
         y_coords.append(selected_func(current_x))
         current_x += step_size
-    return x_coords, y_coords
+    return x_coords, y_coords, selected_func
 
 
 def print_xy_table(x_vals, y_vals):

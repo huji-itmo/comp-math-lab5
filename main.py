@@ -5,6 +5,7 @@ from io_utils import (
     load_file_data,
     print_xy_table,
 )
+from plot import plot_function
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
             elif choice == 2:
                 x, y = get_user_points()
             elif choice == 3:
-                x, y = create_function_points()
+                x, y, func = create_function_points()
             else:
                 raise ValueError("Неверный выбор")
 
@@ -37,7 +38,9 @@ def main():
     x0 = float(input("Введите x0: "))
 
     res_lagrange = interpolator.lagrange(x0)
-    print(f"Результат методом Лагранжа: {round(res_lagrange, 6)}")
+    print(f"Результат методом Лагранжа: {res_lagrange}")
+
+    interpolator.show_table_if_can()
 
     res_newton = interpolator.newton(x0)
     method_name = (
@@ -45,10 +48,25 @@ def main():
         if interpolator._is_finite_diff()
         else "Ньютона (разделённые)"
     )
-    print(f"Результат методом {method_name}: {round(res_newton, 6)}")
+    print(f"Результат методом {method_name}: {res_newton}")
 
     print("\nРазличия между методами:")
-    print(f"| Lagrange - Newton | = {round(abs(res_lagrange - res_newton), 6)}")
+    print(f"| Lagrange - Newton | = {abs(res_lagrange - res_newton)}")
+
+    plot_function(
+        interpolator.x, interpolator.y, interpolator.lagrange, x0, "lagrange.pdf"
+    )
+
+    plot_function(interpolator.x, interpolator.y, interpolator.newton, x0, "newton.pdf")
+
+    if func is not None:
+        print(f"| Lagrange - f(x_0) | = {abs(res_lagrange - func(x0))}", end="")
+        if abs(res_lagrange) > 1e-6:
+            print(f" {abs((res_lagrange - func(x0)) / res_lagrange) * 100}%")
+
+        print(f"| Newton - f(x_0) | = {abs(res_newton - func(x0))}", end="")
+        if abs(res_newton) > 1e-6:
+            print(f" {abs((res_newton - func(x0)) / res_newton) * 100}%")
 
 
 if __name__ == "__main__":
